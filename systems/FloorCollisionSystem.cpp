@@ -8,7 +8,6 @@ extern Coordinator coordinator;
 
 
 
-
 void FloorCollisionSystem::update()
 {
     for(Entity e : listOfEntities) {
