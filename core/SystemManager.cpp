@@ -1,5 +1,6 @@
 #include "SystemManager.h"
 
+
 void SystemManager::entityDestroyed(Entity entity)
 {
     // erase the destroyed entity from the listOfEntities of each system

@@ -18,6 +18,7 @@ public:
     template <typename T>
     std::shared_ptr<T> registerSystem();
 
+
     // set the signature of a system
     template <typename T>
     void setSignature(Signature);

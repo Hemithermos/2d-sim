@@ -64,7 +64,7 @@ void resolveCollision(Entity a, Entity b) {
     if (sepVel > 0.0f)
         sepVel = 0.0f;
 
-    float restitution = 1.0f;
+    float restitution = 0.8f;
     float impulse =
         -(1.0f + restitution) * sepVel / invMassSum;
 

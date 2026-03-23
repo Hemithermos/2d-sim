@@ -10,7 +10,7 @@ constexpr float Y_FLOOR = -4.5f;
 constexpr float Y_CEILING = 4.5f;
 constexpr float LEFT_WALL = -8.0f;
 constexpr float RIGHT_WALL = 8.0f;
-constexpr float RESTITUTION = 1.0f;
+constexpr float RESTITUTION = 0.8f;
 
 
 void FloorCollisionSystem::update()

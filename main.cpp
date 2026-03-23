@@ -4,7 +4,7 @@
 #include "platform/Window.h"
 #include "renderer/Renderer.h"
 #include "core/Coordinator.h"
-
+#include "world.cpp"
 // Components
 #include "components/Transform3D.h"
 #include "components/Velocity.h"
@@ -24,6 +24,14 @@
 Coordinator coordinator;
 constexpr float FIXED_DT = 1.0f / 60.0f;
 constexpr float TIMESCALE = 1.0f;
+
+template<typename... Components>
+Signature makeSignature() {
+    Signature sig;
+    (sig.set(coordinator.getComponentType<Components>()), ...);
+    return sig;
+}
+
 int main()
 {
 
@@ -35,7 +43,7 @@ int main()
     });
 
 
-
+    // initialize the coordinator
     coordinator.init();
 
     // first let's register all of our components
@@ -57,88 +65,26 @@ int main()
     // set signatures to each system
 
     // Clear forces : need forces
-    {
-        Signature sig;
-        sig.set(coordinator.getComponentType<Force>());
-        coordinator.setSystemSignature<ClearForcesSystem>(sig);
-    }
-
-    // Apply External forces : need forces and mass
-    {
-        Signature sig;
-        sig.set(coordinator.getComponentType<Mass>());
-        sig.set(coordinator.getComponentType<Force>());
-        coordinator.setSystemSignature<ApplyExternalForcesSystem>(sig);
-    }
-
+    coordinator.setSystemSignature<ClearForcesSystem>(makeSignature<Force>());
+    // apply external forces : need forces and masses
+    coordinator.setSystemSignature<ApplyExternalForcesSystem>(makeSignature<Mass, Force>());
     // integrate velocity system : need forces, mass and velocity
-    {
-        Signature sig;
-        sig.set(coordinator.getComponentType<Mass>());
-        sig.set(coordinator.getComponentType<Force>());
-        sig.set(coordinator.getComponentType<Velocity>());
-        coordinator.setSystemSignature<IntegrateVelocitySystem>(sig);
-    }
-
+    coordinator.setSystemSignature<IntegrateVelocitySystem>(makeSignature<Mass, Force, Velocity>());
     // integrate position system : need position and velocity
-    {
-        Signature sig;
-        sig.set(coordinator.getComponentType<Transform3D>());
-        sig.set(coordinator.getComponentType<Velocity>());
-        sig.set(coordinator.getComponentType<PreviousPosition>());
-        coordinator.setSystemSignature<IntegratePositionSystem>(sig);
-    }
-
+    coordinator.setSystemSignature<IntegratePositionSystem>(makeSignature<Transform3D, Velocity, PreviousPosition>());
     // floor collision system : need position and velocity
-    {
-        Signature sig;
-        sig.set(coordinator.getComponentType<Transform3D>());
-        sig.set(coordinator.getComponentType<Velocity>());
-        sig.set(coordinator.getComponentType<Spherical>());
-        coordinator.setSystemSignature<FloorCollisionSystem>(sig);
-    }
-
+    coordinator.setSystemSignature<FloorCollisionSystem>(makeSignature<Transform3D, Velocity, Spherical>());
     // render system, need position, prevpos and renderparticle
-    {
-        Signature sig;
-        sig.set(coordinator.getComponentType<Transform3D>());
-        sig.set(coordinator.getComponentType<PreviousPosition>());
-        sig.set(coordinator.getComponentType<RenderParticle>());
-        sig.set(coordinator.getComponentType<Spherical>());
-        coordinator.setSystemSignature<RenderSystem>(sig);
-    }
-
+    coordinator.setSystemSignature<RenderSystem>(makeSignature<Transform3D, PreviousPosition, RenderParticle, Spherical>());
     // Particle collision system : pos, vel, mass, radius
-    {
-        Signature sig;
-        sig.set(coordinator.getComponentType<Transform3D>());
-        sig.set(coordinator.getComponentType<Velocity>());
-        sig.set(coordinator.getComponentType<Spherical>());
-        sig.set(coordinator.getComponentType<Mass>());
-        coordinator.setSystemSignature<ParticleCollisionSystem>(sig);
-    }
+    coordinator.setSystemSignature<ParticleCollisionSystem>(makeSignature<Transform3D, Velocity, Spherical, Mass>());
+  
 
 
+    // launch the initial world configuration
+    World::init();
 
-    Entity particle = coordinator.createEntity();
-
-    coordinator.addComponent(particle, Transform3D{glm::vec3(0.0f, 1.0f, 0.0f)});
-    coordinator.addComponent(particle, Velocity{glm::vec3(0.0f, 0.0f, 0.0f)});
-    coordinator.addComponent(particle, Mass{1.0f});
-    coordinator.addComponent(particle, Force{glm::vec3(0.0f, 0.0f, 0.0f)});
-    coordinator.addComponent(particle, PreviousPosition{glm::vec3(0.0f, 1.0f, 0.0f)});
-    coordinator.addComponent(particle, RenderParticle{});
-    coordinator.addComponent(particle, Spherical{0.5f}); 
-   
-    Entity p2 = coordinator.createEntity();
-    coordinator.addComponent(p2, Transform3D{glm::vec3(0.1f, 3.0f, 0.0f)});
-    coordinator.addComponent(p2, Velocity{glm::vec3(0.0f, 0.0f, 0.0f)});
-    coordinator.addComponent(p2, Mass{1.0f});
-    coordinator.addComponent(p2, Force{glm::vec3(0.0f, 0.0f, 0.0f)});
-    coordinator.addComponent(p2, PreviousPosition{glm::vec3(0.1f, 1.5f, 0.0f)});
-    coordinator.addComponent(p2, RenderParticle{});
-    coordinator.addComponent(p2, Spherical{0.5f}); 
-
+    // setup the clock
     float dt = 1.0f;
     float accumulator = 0.0f;
     auto previousTime = std::chrono::high_resolution_clock::now();

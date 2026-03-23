@@ -34,7 +34,6 @@ public:
     template<typename T> std::shared_ptr<T> registerSystem();    // register system
     template<typename T> void setSystemSignature(Signature);     // setter for the system signature 
 
-
 private:
     // three pointers to each manager
     std::unique_ptr<EntityManager> entityManager;
