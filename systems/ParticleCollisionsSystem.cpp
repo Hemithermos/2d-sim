@@ -64,9 +64,8 @@ void resolveCollision(Entity a, Entity b) {
     if (sepVel > 0.0f)
         sepVel = 0.0f;
 
-    float restitution = 0.8f;
     float impulse =
-        -(1.0f + restitution) * sepVel / invMassSum;
+        -(1.0f + RESTITUTION) * sepVel / invMassSum;
 
     glm::vec3 impulseVec = impulse * normal;
     velA -= impulseVec * invMassA;

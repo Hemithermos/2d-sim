@@ -10,7 +10,7 @@ constexpr float Y_FLOOR = -4.5f;
 constexpr float Y_CEILING = 4.5f;
 constexpr float LEFT_WALL = -8.0f;
 constexpr float RIGHT_WALL = 8.0f;
-constexpr float RESTITUTION = 0.8f;
+constexpr float RESTITUTION = 1.01f;
 
 
 void FloorCollisionSystem::update()
@@ -30,7 +30,7 @@ void FloorCollisionSystem::update()
             pos.position.y = Y_CEILING - rad.radius;
             if(vel.velocity.y > 0.0f)
                 vel.velocity.y = - vel.velocity.y * RESTITUTION;
-            return;
+            
         }
 
         if(pos.position.x - rad.radius < LEFT_WALL) {
@@ -42,7 +42,7 @@ void FloorCollisionSystem::update()
             pos.position.x = RIGHT_WALL - rad.radius;
             if(vel.velocity.x > 0.0f)
                 vel.velocity.x = -vel.velocity.x * RESTITUTION;
-            return;
+            
         }
 
     }

@@ -4,7 +4,7 @@
 #include "platform/Window.h"
 #include "renderer/Renderer.h"
 #include "core/Coordinator.h"
-#include "world.cpp"
+#include "world.h"
 // Components
 #include "components/Transform3D.h"
 #include "components/Velocity.h"
@@ -82,8 +82,8 @@ int main()
 
 
     // launch the initial world configuration
-    World::init();
-
+    World world;
+    world.init();
     // setup the clock
     float dt = 1.0f;
     float accumulator = 0.0f;
@@ -103,7 +103,7 @@ int main()
 
         while (accumulator >= FIXED_DT) {
             clearForceSystem->update();
-            applyExternalForcesSystem->update(FIXED_DT);
+            //applyExternalForcesSystem->update(FIXED_DT);
             integrateVelocitySystem->update(FIXED_DT);
             integratePositionSystem->update(FIXED_DT);
 
