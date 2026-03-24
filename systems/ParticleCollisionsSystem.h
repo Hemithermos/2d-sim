@@ -2,7 +2,7 @@
 #define PARTICLE_COLLISIONS_SYSTEMS_H
 
 #include "../core/System.h"
-constexpr float RESTITUTION = 1.01f;
+#include "../settings/Settings.h"
 class ParticleCollisionSystem : public System {
 public:
     void update(float);

@@ -4,6 +4,7 @@
 #include "platform/Window.h"
 #include "renderer/Renderer.h"
 #include "core/Coordinator.h"
+#include "settings/Settings.h"
 #include "world.h"
 // Components
 #include "components/Transform3D.h"
@@ -22,8 +23,7 @@
 #include "systems/RenderSystem.h"
 #include "systems/ParticleCollisionsSystem.h"
 Coordinator coordinator;
-constexpr float FIXED_DT = 1.0f / 60.0f;
-constexpr float TIMESCALE = 1.0f;
+
 
 template<typename... Components>
 Signature makeSignature() {

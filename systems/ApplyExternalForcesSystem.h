@@ -4,8 +4,7 @@
 #include "../core/System.h"
 #include "../components/Force.h"
 #include "../components/Mass.h"
-
-constexpr glm::vec3 GRAVITY = { 0.0f, -9.81f, 0.0f };
+#include "../settings/Settings.h"
 
 
 class ApplyExternalForcesSystem : public System
