@@ -1,10 +1,10 @@
-#include "ApplyExternalForcesSystem.h"
+#include "ApplyGravityForceSystem.h"
 #include "../core/Coordinator.h"
 
 
 extern Coordinator coordinator;
 
-void ApplyExternalForcesSystem::update(float dt)
+void ApplyGravityForceSystem::update(float dt)
 {
     for(Entity e : listOfEntities)
     {

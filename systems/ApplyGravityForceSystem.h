@@ -1,5 +1,5 @@
-#ifndef APPLY_EXTERNAL_FORCES_SYSTEM_H
-#define APPLY_EXTERNAL_FORCES_SYSTEM_H
+#ifndef APPLY_GRAVITY_FORCE_SYSTEM_H
+#define APPLY_GRAVITY_FORCE_SYSTEM_H
 
 #include "../core/System.h"
 #include "../components/Force.h"
@@ -7,7 +7,7 @@
 #include "../settings/Settings.h"
 
 
-class ApplyExternalForcesSystem : public System
+class ApplyGravityForceSystem : public System
 {
 public:
     void update(float dt);
