@@ -10,7 +10,8 @@
 #include "core/Entity.h"
 #include <random>
 #include "settings/Settings.h"
-
+#include "components/Density.h"
+#include "components/Pressure.h"
 
 
 void World::spawnParticle(glm::vec3 pos, glm::vec3 vel, float m, float radius,
@@ -24,18 +25,20 @@ void World::spawnParticle(glm::vec3 pos, glm::vec3 vel, float m, float radius,
     coordinator.addComponent(particle, PreviousPosition{pos});
     coordinator.addComponent(particle, RenderParticle{glm::vec4(color, 1.0f)});
     coordinator.addComponent(particle, Spherical{radius});
+    coordinator.addComponent(particle, Density{});
+    coordinator.addComponent(particle, Pressure{});
 }
 
 void World::init() {
-    std::default_random_engine generator;
-    std::uniform_real_distribution<float> distribution(-0.01f, 0.01f);
-    for(float i = -7.5; i <= 7.5; i+=2) {
-        for(float j = -3.5; j <= 4.5; j+=1) {
-            float a = distribution(generator);
-            float vx = 10 * distribution(generator);
-            float vy = 10 * distribution(generator);
-            spawnParticle({i + a, j + a, 0.0f}, {vx, vy, 0.0f}, 1.0f,
-                            0.3f + a * 20, {2*(i+7.5f)/30.0f, 2*(j+3.5f)/14.0f, 1.0f});
+
+    for(float xi = LEFT_WALL ; xi <= RIGHT_WALL; xi+=(RIGHT_WALL - LEFT_WALL)/NUM_PARTICLE_SQR_ROOT) {
+        for(float yi = Y_FLOOR ; yi <= Y_CEILING; yi += (Y_CEILING - Y_FLOOR)/NUM_PARTICLE_SQR_ROOT) {
+            spawnParticle({xi, yi, 0.0f}, //position
+                {0.0f,0.0f, 0.0f}, //speed
+                1.0f, //mass
+                0.1f, // radius
+                {1.0f, 1.0f, 1.0f} // colour
+            );
         }
     }
 }

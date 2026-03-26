@@ -1,5 +1,6 @@
 #pragma once 
 #include <glad/glad.h>
+#include "../settings/Settings.h"
 class BackgroundMesh {
 public:
     void init();

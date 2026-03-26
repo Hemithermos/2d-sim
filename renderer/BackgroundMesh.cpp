@@ -4,10 +4,10 @@
 void BackgroundMesh::init()
 {
     std::vector<float> vertices = {
-        -8.0f, -4.5f,
-         8.0f, -4.5f,
-         8.0f,  4.5f,
-        -8.0f,  4.5f};
+        LEFT_WALL, Y_FLOOR,
+        RIGHT_WALL, Y_FLOOR,
+        RIGHT_WALL,  Y_CEILING,
+        LEFT_WALL, Y_CEILING};
     vertexCount = 4;
 
 

@@ -1,4 +1,16 @@
 #include "SystemManager.h"
+void removeEntity(std::vector<Entity>& v, Entity e)
+{
+    for (size_t i = 0; i < v.size(); i++)
+    {
+        if (v[i] == e)
+        {
+            v[i] = v.back();
+            v.pop_back();
+            return;
+        }
+    }
+}
 
 
 void SystemManager::entityDestroyed(Entity entity)
@@ -8,7 +20,7 @@ void SystemManager::entityDestroyed(Entity entity)
     for (auto const &pair : systems)
     {
         auto const &system = pair.second;
-        system->listOfEntities.erase(entity);
+        removeEntity(system->listOfEntities, entity);
     }
 }
 
@@ -29,12 +41,12 @@ void SystemManager::entitySignatureChanged(Entity entity, Signature signature)
         // for this we use the bitwise and between the two signatures
         if ((systemSignature & signature) == systemSignature)
         {
-            system->listOfEntities.insert(entity);
+            system->listOfEntities.push_back(entity);
         }
         // if it doesnt match we erase the entity from the system
         else
         {
-            system->listOfEntities.erase(entity);
+            removeEntity(system->listOfEntities, entity);
         }
     }
 }

@@ -10,7 +10,7 @@ Renderer::Renderer(int w, int h)
     circleShader.load("assets/shaders/circle.vert", "assets/shaders/circle.frag");
     bgShader.load("assets/shaders/background.vert", "assets/shaders/background.frag");
     camera.setPosition(glm::vec2(0.0f, 0.0f));
-    camera.setZoom(5.0f);
+    camera.setZoom(10.0f);
 }
 
 

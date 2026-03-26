@@ -1,14 +1,14 @@
 #ifndef CORE_SYSTEM_H
 #define CORE_SYSTEM_H
 
-#include <set>
+#include <vector>
 #include "Entity.h"
 
 // every system should inherit that class
 class System
 {
 public:
-    std::set<Entity> listOfEntities;
+    std::vector<Entity> listOfEntities;
 };
 
 #endif

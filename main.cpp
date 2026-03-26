@@ -14,14 +14,21 @@
 #include "components/PreviousPosition.h"
 #include "components/RenderParticle.h"
 #include "components/Spherical.h"
+#include "components/Pressure.h"
 // Systems
 #include "systems/ClearForcesSystem.h"
-#include "systems/ApplyExternalForcesSystem.h"
+#include "systems/ApplyGravityForceSystem.h"
 #include "systems/IntegrateVelocitySystem.h"
 #include "systems/IntegratePositionSystem.h"
 #include "systems/FloorCollisionSystem.h"
 #include "systems/RenderSystem.h"
 #include "systems/ParticleCollisionsSystem.h"
+#include "systems/ApplyPressureForceSystem.h"
+#include "systems/IntegrateDensitySystem.h"
+#include "systems/IntegratePressureSystem.h"
+
+
+
 Coordinator coordinator;
 
 
@@ -54,20 +61,25 @@ int main()
     coordinator.registerComponent<PreviousPosition>();
     coordinator.registerComponent<RenderParticle>();
     coordinator.registerComponent<Spherical>();
+    coordinator.registerComponent<Pressure>();
+    coordinator.registerComponent<Density>();
     // now register the systems
     auto clearForceSystem = coordinator.registerSystem<ClearForcesSystem>();
-    auto applyExternalForcesSystem = coordinator.registerSystem<ApplyExternalForcesSystem>();
+    auto applyExternalForcesSystem = coordinator.registerSystem<ApplyGravityForceSystem>();
     auto integrateVelocitySystem = coordinator.registerSystem<IntegrateVelocitySystem>(); 
     auto integratePositionSystem = coordinator.registerSystem<IntegratePositionSystem>();
     auto floorCollisionSystem = coordinator.registerSystem<FloorCollisionSystem>();
     auto renderSystem = coordinator.registerSystem<RenderSystem>(); 
-    auto particleCollisionsSystem = coordinator.registerSystem<ParticleCollisionSystem>(); 
+    auto particleCollisionsSystem = coordinator.registerSystem<ParticleCollisionSystem>();
+    auto integrateDensitySystem = coordinator.registerSystem<IntegrateDensitySystem>();
+    auto integratePressureSystem = coordinator.registerSystem<IntegratePressureSystem>();
+    auto applyPressureSystem = coordinator.registerSystem<ApplyPressureForceSystem>();
     // set signatures to each system
 
     // Clear forces : need forces
     coordinator.setSystemSignature<ClearForcesSystem>(makeSignature<Force>());
     // apply external forces : need forces and masses
-    coordinator.setSystemSignature<ApplyExternalForcesSystem>(makeSignature<Mass, Force>());
+    coordinator.setSystemSignature<ApplyGravityForceSystem>(makeSignature<Mass, Force>());
     // integrate velocity system : need forces, mass and velocity
     coordinator.setSystemSignature<IntegrateVelocitySystem>(makeSignature<Mass, Force, Velocity>());
     // integrate position system : need position and velocity
@@ -78,6 +90,12 @@ int main()
     coordinator.setSystemSignature<RenderSystem>(makeSignature<Transform3D, PreviousPosition, RenderParticle, Spherical>());
     // Particle collision system : pos, vel, mass, radius
     coordinator.setSystemSignature<ParticleCollisionSystem>(makeSignature<Transform3D, Velocity, Spherical, Mass>());
+    // Integrate Density System : pos mass density
+    coordinator.setSystemSignature<IntegrateDensitySystem>(makeSignature<Transform3D, Mass, Density>());
+    // Integrate pressure system : pressure density
+    coordinator.setSystemSignature<IntegratePressureSystem>(makeSignature<Density, Pressure>());
+    // Apply pressure force : pos force density pressure
+    coordinator.setSystemSignature<ApplyPressureForceSystem>(makeSignature<Transform3D, Force, Density, Pressure>());
   
 
 
@@ -100,10 +118,14 @@ int main()
         frameTime = std::min(frameTime, 0.25f);
         frameTime *= TIMESCALE;
         accumulator += frameTime;
-
+        std::cout << "new iter" << std::endl;
         while (accumulator >= FIXED_DT) {
             clearForceSystem->update();
-            //applyExternalForcesSystem->update(FIXED_DT);
+
+            integrateDensitySystem->update(FIXED_DT);
+            integratePressureSystem->update(FIXED_DT);
+            applyPressureSystem->update(FIXED_DT);
+
             integrateVelocitySystem->update(FIXED_DT);
             integratePositionSystem->update(FIXED_DT);
 
